@@ -127,6 +127,7 @@ handler.setInputAction((click) => {
 let profileChart = null;
 
 function openArgoProfile(float) {
+  function openArgoProfile(float) {
   document.getElementById("detail-panel").style.display = "block";
   document.getElementById("float-name").innerText = float.name;
   document.getElementById("float-loc").innerText = `${float.lat}° N, ${float.lon}° E`;
@@ -144,36 +145,62 @@ function openArgoProfile(float) {
     tbody.innerHTML += `
       <tr>
         <td>${depths[i]}</td>
-        <td>${modelTemp[i]}</td>
         <td>${argoTemp[i]}</td>
+        <td>${modelTemp[i]}</td>
         <td style="color:${diff >= 0 ? '#4fc3f7' : '#ff8a80'}">${diffSign}</td>
       </tr>
     `;
   }
 
-  // Draw Vertical Profile Chart (Depth inverted vertically)
+  // Draw Vertical Profile Chart
   const ctx = document.getElementById("depthProfileChart").getContext("2d");
   if (profileChart) profileChart.destroy();
 
   profileChart = new Chart(ctx, {
-    type: "line",
+    type: "scatter",
     data: {
-      labels: depths,
       datasets: [
-        { label: "Argo (Observed)", data: argoTemp, borderColor: "#00e5ff", borderWidth: 2, pointRadius: 4 },
-        { label: "Model", data: modelTemp, borderColor: "#ff5252", borderWidth: 2, borderDash: [4, 4], pointRadius: 4 }
+        {
+          label: "Argo (Observed)",
+          data: depths.map((d, i) => ({ x: argoTemp[i], y: d })),
+          borderColor: "#00e5ff",
+          backgroundColor: "#00e5ff",
+          borderWidth: 2,
+          pointRadius: 4,
+          showLine: true
+        },
+        {
+          label: "Model",
+          data: depths.map((d, i) => ({ x: modelTemp[i], y: d })),
+          borderColor: "#ff5252",
+          borderDash: [4, 4],
+          borderWidth: 2,
+          pointRadius: 4,
+          showLine: true
+        }
       ]
     },
     options: {
       responsive: true,
-      indexAxis: "y",
+      maintainAspectRatio: false,
+      parsing: false,
       scales: {
-        y: { reverse: true, ticks: { color: "#cfd8dc" }, grid: { color: "#162d4a" } },
-        x: { ticks: { color: "#cfd8dc" }, grid: { color: "#162d4a" } }
+        x: {
+          title: { display: true, text: "Temperature (°C)", color: "#cfd8dc" },
+          ticks: { color: "#cfd8dc" },
+          grid: { color: "#162d4a" }
+        },
+        y: {
+          title: { display: true, text: "Depth (m)", color: "#cfd8dc" },
+          reverse: true,
+          ticks: { color: "#cfd8dc" },
+          grid: { color: "#162d4a" }
+        }
       },
       plugins: { legend: { labels: { color: "#cfd8dc" } } }
     }
   });
+}
 }
 
 function closeDetailPanel() {

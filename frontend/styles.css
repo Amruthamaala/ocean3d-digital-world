@@ -1,9 +1,324 @@
-#cesiumContainer {
+/* Reset and Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #07111e;
+  color: #cfd8dc;
+  overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar Header */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #0a192f;
+  border-bottom: 1px solid #1e3a8a;
+  height: 60px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.logo-container h1 {
+  font-size: 18px;
+  color: #60a5fa;
+  letter-spacing: 1px;
+}
+
+.logo-container p {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+}
+
+nav a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding-bottom: 4px;
+}
+
+nav a.active, nav a:hover {
+  color: #60a5fa;
+  border-bottom: 2px solid #60a5fa;
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+  display: flex;
+  height: calc(100vh - 120px); /* Adjusts for 60px header + 60px footer */
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Sidebar Controls */
+.sidebar {
+  width: 320px;
+  min-width: 320px;
+  background: #0d2137;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #162d4a;
+  z-index: 10;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.control-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  letter-spacing: 1px;
+}
+
+.var-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.var-btn {
+  background: #162d4a;
+  color: #cbd5e1;
+  border: 1px solid #1e3a8a;
+  padding: 10px 14px;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px;
+}
+
+.var-btn.active, .var-btn:hover {
+  background: #2563eb;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  background: #1e3a8a;
+  color: #60a5fa;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #64748b;
+}
+
+select {
+  background: #162d4a;
+  color: #fff;
+  border: 1px solid #1e3a8a;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+}
+
+.overlay-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.overlay-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+/* 3D Globe Viewport Area */
+.globe-viewport, #globe-container {
   flex: 1;
   position: relative;
   width: 100%;
   height: 100%;
+  background: #040d1a;
+  overflow: hidden;
 }
 
-/* Hide default Cesium credit bar and animation widgets to maintain clean UI */
-.cesium-viewer-bottom, .cesium-widget-credits { display: none !important; }
+#globe-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* Legend Box */
+.legend-box {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10, 25, 47, 0.85);
+  border: 1px solid #1e3a8a;
+  border-radius: 8px;
+  padding: 12px 18px;
+  width: 260px;
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+
+.legend-header {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 6px;
+  color: #e2e8f0;
+}
+
+.color-ramp-bar {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(to right, blue, cyan, green, yellow, red);
+}
+
+.scale-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+/* Detail Panel Overlay (Chart & Table) */
+#detail-panel {
+  display: none;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 380px;
+  max-height: 85vh;
+  background: rgba(13, 33, 55, 0.95);
+  border: 1px solid #2563eb;
+  border-radius: 12px;
+  padding: 16px;
+  z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  overflow-y: auto;
+  backdrop-filter: blur(6px);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  color: #fff;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  margin: 12px 0;
+}
+
+.val-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-top: 10px;
+}
+
+.val-table th, .val-table td {
+  border: 1px solid #1e3a8a;
+  padding: 6px;
+  text-align: center;
+}
+
+.val-table th {
+  background: #162d4a;
+  color: #60a5fa;
+}
+
+/* Bottom Footer Bar */
+.depth-slices-bar {
+  height: 60px;
+  background: #0a192f;
+  border-top: 1px solid #1e3a8a;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+}
+
+.depth-slices-bar span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.slice-card {
+  background: #162d4a;
+  color: #cbd5e1;
+  border: 1px solid #1e3a8a;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.slice-card.active, .slice-card:hover {
+  background: #2563eb;
+  color: #fff;
+  border-color: #60a5fa;
+}
